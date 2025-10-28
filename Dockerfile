@@ -1,24 +1,25 @@
-# Use a base image with Python
 FROM python:3.10-slim
 
-# Install system dependencies
+# Install dependencies for dlib and OpenCV
 RUN apt-get update && apt-get install -y \
     cmake \
     libgl1-mesa-glx \
     libglib2.0-0 \
+    build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# Set working directory
+# Set work directory
 WORKDIR /app
 
-# Copy project files
+# Copy files
 COPY . .
 
 # Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --upgrade pip
+RUN pip install --no-cache-dir fastapi uvicorn opencv-python-headless numpy face-recognition python-multipart
 
-# Expose port
+# Expose port for FastAPI
 EXPOSE 7860
 
-# Run FastAPI app
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "7860"]
+# Run FastAPI
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "7860"]
